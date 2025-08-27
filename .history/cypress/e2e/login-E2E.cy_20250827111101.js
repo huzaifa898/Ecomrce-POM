@@ -1,0 +1,34 @@
+import LoginPage from "../pages/LoginPage";
+import NavigationPage from "../pages/NavigationPage";
+
+describe("Advantage Online Shopping - Full E2E Flow (POM)", () => {
+  const user = {
+    username: "user123456",
+    password: "Qazwsx321@", // ⚠️ use already registered user
+  };
+
+  before(() => {
+    cy.visit("/#/");
+  });
+
+  it("Login", () => {
+    LoginPage.openLoginModal();
+    LoginPage.login(user.username, user.password);
+    LoginPage.verifyLogin(user.username);
+
+    NavigationPage.verifyLinks();
+
+    HomePage.clickSpeakerHero();
+    HomePage.clickSpecificSpeakerById("20");
+    HomePage.clickSpecificSpeakerById("20");
+
+    cy.url().should("include", "product");
+    cy.get(".productName", { timeout: 10000 }).should("be.visible");
+
+    ProductPage.addToCart();
+    ProductPage.checkoutDirectlyFromMiniCart();
+
+    // Logout after test
+    LogoutPage.logout();
+  });
+});
